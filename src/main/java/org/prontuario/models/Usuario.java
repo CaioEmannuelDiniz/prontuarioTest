@@ -193,4 +193,6 @@ public abstract class Usuario {
     public void setDataNascimento(@NotNull(message = "A data de nascimento não pode ser nula.") LocalDate dataNascimento) {
         this.dataNascimento = dataNascimento;
     }
+
+    public abstract String getIdentificador();
 }

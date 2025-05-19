@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface PacienteRepository extends JpaRepository<Paciente, Long> {
     Boolean existsByCpf(String cpf);
     List<Paciente> findByNomeCompleto(String name);
+    Optional<Paciente> findByCpf(String cpf);
+
 }

@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/medico")
 public class MedicoController {
@@ -25,6 +27,12 @@ public class MedicoController {
         Medico novoMedico = medicoService.createMedico(medico);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(novoMedico);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Medico>> getAllMedicos() {
+        List<Medico> medicos = medicoService.getAllMedicos();
+        return ResponseEntity.status(HttpStatus.OK).body(medicos);
     }
 
     @DeleteMapping("/{id}")

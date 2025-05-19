@@ -41,10 +41,6 @@ public class Medico extends Usuario {
         this.emailProfissional = emailProfissional;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -75,6 +71,11 @@ public class Medico extends Usuario {
 
     public @Email(message = "O e-mail profissional deve ser válido") String getEmailProfissional() {
         return emailProfissional;
+    }
+
+    @Override
+    public String getIdentificador() {
+        return crm;
     }
 
     @Override

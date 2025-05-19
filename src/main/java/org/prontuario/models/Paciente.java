@@ -2,6 +2,9 @@ package org.prontuario.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -38,10 +41,14 @@ public class Paciente extends Usuario {
     @Min(value = 1,message = "A altura deve ser maior que 0")
     private Double altura;
 
+    @ElementCollection
+    private List<Long> prontuarios;
+
     public Paciente() {
     }
 
-    public Paciente(Long id, String cpf, Set<String> alergias, Set<String> doencas, Set<String> medicamentos, Set<String> historicoMedico, String tipoSanguineo, Double peso, Double altura) {
+    public Paciente(String nomeCompleto, String rg, String genero, String estadoCivil, String email, String senha, String telefone, String cep, String endereco, String bairro, String cidade, String estado, Integer numero, LocalDate dataNascimento, Long id, String cpf, Set<String> alergias, Set<String> doencas, Set<String> medicamentos, Set<String> historicoMedico, String tipoSanguineo, Double peso, Double altura, List<Long> prontuarios) {
+        super(nomeCompleto, rg, genero, estadoCivil, email, senha, telefone, cep, endereco, bairro, cidade, estado, numero, dataNascimento);
         this.id = id;
         this.cpf = cpf;
         this.alergias = alergias;
@@ -51,7 +58,10 @@ public class Paciente extends Usuario {
         this.tipoSanguineo = tipoSanguineo;
         this.peso = peso;
         this.altura = altura;
+        this.prontuarios = prontuarios;
     }
+
+
 
     @Override
     public String toString() {
@@ -72,9 +82,6 @@ public class Paciente extends Usuario {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public @NotNull(message = "O CPF não pode ser nulo") @Pattern(regexp = "\\d{11}", message = "CPF deve ter 11 dígitos numéricos") String getCpf() {
         return cpf;
@@ -138,5 +145,18 @@ public class Paciente extends Usuario {
 
     public void setAltura(@Positive(message = "A altura não pode ser negativa") @Min(value = 1, message = "A altura deve ser maior que 0") Double altura) {
         this.altura = altura;
+    }
+
+    public List<Long> getProntuarios() {
+        return prontuarios;
+    }
+
+    public void setProntuarios(List<Long> prontuarios) {
+        this.prontuarios = prontuarios;
+    }
+
+    @Override
+    public String getIdentificador() {
+        return cpf;
     }
 }
