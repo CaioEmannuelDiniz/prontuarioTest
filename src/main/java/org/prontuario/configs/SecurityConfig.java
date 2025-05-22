@@ -23,7 +23,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/medico/**", "/paciente/**").hasAuthority("TIPO_MEDICO")
-                        .requestMatchers("/paciente/**").hasAuthority("TIPO_PACIENTE")
+                        .requestMatchers("/paciente/**").hasAnyAuthority("TIPO_MEDICO", "TIPO_PACIENTE")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
