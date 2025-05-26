@@ -17,7 +17,7 @@ public class JwtUtil {
                 .setSubject(identificador)
                 .claim("tipo", tipo)  // importante
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 60000))
+                .setExpiration(new Date(System.currentTimeMillis() + 86400000))
                 .signWith(Keys.hmacShaKeyFor(SECRET.getBytes()), SignatureAlgorithm.HS256)
                 .compact();
     }

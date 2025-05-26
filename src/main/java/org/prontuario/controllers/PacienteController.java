@@ -7,6 +7,7 @@ import org.prontuario.services.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +24,8 @@ public class PacienteController {
     }
 
     //Create
-    @PostMapping
+    @PostMapping("/cadastrar")
+    @PreAuthorize("hasAnyAuthority('TIPO_MEDICO', 'TIPO_PACIENTE')")
     public ResponseEntity<Paciente> createPaciente(@Valid @RequestBody Paciente paciente) {
         Paciente novoPaciente = pacienteService.savePaciente(paciente);
 
