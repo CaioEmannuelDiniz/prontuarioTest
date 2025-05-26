@@ -6,6 +6,7 @@ import org.prontuario.exceptions.NameNaoLocalizado;
 import org.prontuario.models.Paciente;
 import org.prontuario.repositories.PacienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,18 +18,25 @@ import java.util.Optional;
 public class PacienteService {
 
     private final PacienteRepository pacienteRepository;
+    private final PasswordEncoder passwordEncoder;
 
     //Constructor
     @Autowired
-    public PacienteService(PacienteRepository pacienteRepository) {
+    public PacienteService(PacienteRepository pacienteRepository, PasswordEncoder passwordEncoder) {
         this.pacienteRepository = pacienteRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     //CREATE
     public Paciente savePaciente(Paciente paciente){
+        
         if (pacienteRepository.existsByCpf(paciente.getCpf())){
             throw new CpfJaCadastradoException("Já existe um paciente com esse CPF.");
         }
+        
+        String senhaCriptografada = passwordEncoder.encode(paciente.getSenha());
+        paciente.setSenha(senhaCriptografada);
+
         return pacienteRepository.save(paciente);
     }
 
@@ -70,6 +78,7 @@ public class PacienteService {
         Paciente pacienteExistente = paciente.get();
 
 
+        pacienteExistente.setSenha(passwordEncoder.encode(pacienteAtualizado.getSenha()));
         pacienteExistente.setNomeCompleto(pacienteAtualizado.getNomeCompleto());
         pacienteExistente.setGenero(pacienteAtualizado.getGenero());
         pacienteExistente.setEstadoCivil(pacienteAtualizado.getEstadoCivil());

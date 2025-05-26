@@ -7,6 +7,7 @@ import org.prontuario.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,6 +22,9 @@ public class AuthController {
 
     @Autowired
     private PacienteRepository pacienteRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;  // ✅ injeta o encoder
 
     @PostMapping("/medico")
     public ResponseEntity<String> loginMedico(@RequestParam String crm, @RequestParam String senha) {
@@ -38,7 +42,8 @@ public class AuthController {
     @PostMapping("/paciente")
     public ResponseEntity<String> loginPaciente(@RequestBody LoginDTO loginDTO) {
         var paciente = pacienteRepository.findByCpf(loginDTO.cpf);
-        if (paciente.isEmpty() || !paciente.get().getSenha().equals(loginDTO.senha)) {
+
+        if (paciente.isEmpty() || !passwordEncoder.matches(loginDTO.senha, paciente.get().getSenha())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("CPF ou senha inválidos");
         }
 
