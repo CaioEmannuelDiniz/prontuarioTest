@@ -44,4 +44,15 @@ public class GlobalExceptionHandler {
                 )
         );
     }
+
+    @ExceptionHandler(ProntuarioNaoLocalizado.class)
+    public ResponseEntity<ExtendsErro> handleProntuarioNaoLocalizado(ProntuarioNaoLocalizado ex, HttpServletRequest request){
+        return ResponseEntity.status(HttpStatus.FOUND).body((
+                new ExtendsErro(Instant.now(),
+                        HttpStatus.FOUND.value(),
+                        ex.getMessage(),
+                        request.getContextPath())
+                )
+        );
+    }
 }

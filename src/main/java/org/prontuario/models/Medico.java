@@ -73,6 +73,10 @@ public class Medico extends Usuario {
         return emailProfissional;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     @Override
     public String getIdentificador() {
         return crm;

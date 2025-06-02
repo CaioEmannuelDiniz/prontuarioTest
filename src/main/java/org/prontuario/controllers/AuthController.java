@@ -1,6 +1,7 @@
 package org.prontuario.controllers;
 
-import org.prontuario.dto.LoginDTO;
+import org.prontuario.dto.LoginMedicoDTO;
+import org.prontuario.dto.LoginPacienteDTO;
 import org.prontuario.repositories.MedicoRepository;
 import org.prontuario.repositories.PacienteRepository;
 import org.prontuario.util.JwtUtil;
@@ -27,27 +28,27 @@ public class AuthController {
     private PasswordEncoder passwordEncoder;  // ✅ injeta o encoder
 
     @PostMapping("/medico")
-    public ResponseEntity<String> loginMedico(@RequestParam String crm, @RequestParam String senha) {
-        var medico = medicoRepository.findByCrm(crm);
-        if (medico.isEmpty() || !medico.get().getSenha().equals(senha)) {
+    public ResponseEntity<String> loginMedico(@RequestBody LoginMedicoDTO loginMedicoDTO) {
+        var medico = medicoRepository.findByCrm(loginMedicoDTO.crm);
+        if (medico.isEmpty() || !passwordEncoder.matches(loginMedicoDTO.senha,medico.get().getSenha())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("CRM ou senha inválidos");
         }
 
         // Gera token com tipo TIPO_MEDICO
-        String token = jwtUtil.generateToken(crm, "TIPO_MEDICO");
-        return ResponseEntity.ok(token);
+        String token = jwtUtil.generateToken(loginMedicoDTO.crm, "TIPO_MEDICO");
+        return ResponseEntity.ok("{\"token\":\"" + token + "\"}");
     }
 
 
     @PostMapping("/paciente")
-    public ResponseEntity<String> loginPaciente(@RequestBody LoginDTO loginDTO) {
-        var paciente = pacienteRepository.findByCpf(loginDTO.cpf);
+    public ResponseEntity<String> loginPaciente(@RequestBody LoginPacienteDTO loginPacienteDTO) {
+        var paciente = pacienteRepository.findByCpf(loginPacienteDTO.cpf);
 
-        if (paciente.isEmpty() || !passwordEncoder.matches(loginDTO.senha, paciente.get().getSenha())) {
+        if (paciente.isEmpty() || !passwordEncoder.matches(loginPacienteDTO.senha, paciente.get().getSenha())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("CPF ou senha inválidos");
         }
 
-        String token = jwtUtil.generateToken(loginDTO.cpf, "TIPO_PACIENTE");
+        String token = jwtUtil.generateToken(loginPacienteDTO.cpf, "TIPO_PACIENTE");
         return ResponseEntity.ok("{\"token\":\"" + token + "\"}");
 
     }

@@ -22,7 +22,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/medico/**").hasAuthority("TIPO_MEDICO")
+                        .requestMatchers("/medico/**","/prontuarios/**").hasAuthority("TIPO_MEDICO")
                         .requestMatchers("/paciente/**").hasAnyAuthority("TIPO_MEDICO", "TIPO_PACIENTE")
                         .anyRequest().authenticated()
                 )

@@ -1,6 +1,7 @@
 package org.prontuario.services;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.prontuario.exceptions.ProntuarioNaoLocalizado;
 import org.prontuario.models.Medico;
 import org.prontuario.models.Paciente;
 import org.prontuario.models.Prontuario;
@@ -19,12 +20,13 @@ public class ProntuarioService {
     private final PacienteRepository pacienteRepository;
 
 
-
+    //Construtor
     public ProntuarioService(ProntuarioRepository prontuarioRepository, PacienteService pacienteService, PacienteRepository pacienteRepository) {
         this.prontuarioRepository = prontuarioRepository;
         this.pacienteRepository = pacienteRepository;
     }
 
+    //Criar um Prontuario
     public boolean createProntuario(Prontuario prontuario, Usuario usuario) {
         if (!(usuario instanceof Medico)) {
             throw new SecurityException("Apenas médicos podem criar prontuários.");
@@ -56,4 +58,48 @@ public class ProntuarioService {
 
         return true;
     }
+
+    //Localizar o Prontuario pelo codigo
+    public Prontuario readProntuario(Long codigo) {
+
+        return prontuarioRepository.findByCodigoProntuario(codigo)
+                .orElseThrow(() -> new ProntuarioNaoLocalizado("Prontuário não localizado!"));
+
+
+    }
+
+    //Alterar um Prontuario
+    public boolean updateProntuario(Prontuario prontuario) {
+        if (!prontuarioRepository.existsById(prontuario.getId())) {
+            return false;
+        }
+
+        prontuario.setPaciente(prontuario.getPaciente());
+        prontuario.setEvolucaoClinica(prontuario.getEvolucaoClinica());
+        prontuario.setMedico((prontuario.getMedico()));
+        prontuario.setDiagnostico(prontuario.getDiagnostico());
+        prontuario.setCodigoProntuario(prontuario.getCodigoProntuario());
+
+        prontuario.setCondutasPlanosTerapeuticos(prontuario.getCondutasPlanosTerapeuticos());
+        prontuario.setQueixaPrincipal(prontuario.getQueixaPrincipal());
+        prontuario.setExameFisico(prontuario.getExameFisico());
+        prontuario.setDataCriacao(prontuario.getDataCriacao());
+        prontuario.setPrescricaoMedica(prontuario.getPrescricaoMedica());
+
+        prontuarioRepository.save(prontuario);
+
+
+        return true;
+    }
+
+    //Deletar um Prontuario
+    public void deleteProntuario(Long codigo) {
+        if (!prontuarioRepository.existsById(codigo)) {
+            throw new ProntuarioNaoLocalizado("Prontuario não localizado");
+        }
+
+        prontuarioRepository.deleteById(codigo);
+
+    }
+
 }

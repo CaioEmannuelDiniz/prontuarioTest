@@ -5,6 +5,7 @@ import org.prontuario.exceptions.IdNaoLocalizado;
 import org.prontuario.models.Medico;
 import org.prontuario.repositories.MedicoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,11 +15,13 @@ import java.util.Optional;
 public class MedicoService {
 
     private final MedicoRepository medicoRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     //CONSTRUTOR
-    public MedicoService(MedicoRepository medicoRepository){
+    public MedicoService(MedicoRepository medicoRepository, PasswordEncoder passwordEncoder){
         this.medicoRepository = medicoRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     //Create
@@ -26,6 +29,11 @@ public class MedicoService {
         if (medicoRepository.existsByCrm(medico.getCrm())){
             throw new CpfJaCadastradoException("Já existe um paciente com esse CPF.");
         }
+
+        String senhaCriptografada = passwordEncoder.encode(medico.getSenha());
+
+        medico.setSenha(senhaCriptografada);
+
         return medicoRepository.save(medico);
     }
 
@@ -48,4 +56,6 @@ public class MedicoService {
             medicoRepository.deleteById(id);
         }
     }
+
+
 }
